@@ -25,12 +25,18 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    images: [
-      {
-        type: String,
-        required: true,
+    images: {
+      type: [
+        {
+          type: String,
+          required: true,
+        },
+      ],
+      validate: {
+        validator: (arr) => Array.isArray(arr) && arr.length > 0,
+        message: "At least one image is required",
       },
-    ],
+    },
     averageRating: {
       type: Number,
       min: 0,

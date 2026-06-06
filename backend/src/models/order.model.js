@@ -64,7 +64,13 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    orderItems: [orderItemSchema],
+    orderItems: {
+      type: [orderItemSchema],
+      validate: {
+        validator: (arr) => Array.isArray(arr) && arr.length > 0,
+        message: "Order must contain at least one item",
+      },
+    },
     shippingAddress: {
       type: shippingAddressSchema,
       required: true,

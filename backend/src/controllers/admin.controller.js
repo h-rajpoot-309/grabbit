@@ -2,12 +2,23 @@ import cloudinary from "../config/cloudinary.js";
 import { Product } from "../models/product.model.js";
 import { Order } from "../models/order.model.js";
 import { User } from "../models/user.model.js";
+import fs from "node:fs/promises";
 
 export async function createProduct(req, res) {
   try {
     const { name, description, price, stock, category } = req.body;
 
-    if (!name || !description || !price || !stock || !category) {
+    if (
+      !name ||
+      !description ||
+      price === undefined ||
+      price === null ||
+      price === "" ||
+      stock === undefined ||
+      stock === null ||
+      stock === "" ||
+      !category
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -28,6 +39,7 @@ export async function createProduct(req, res) {
     });
 
     const uploadResults = await Promise.all(uploadPromises);
+    await Promise.allSettled(req.files.map((file) => fs.unlink(file.path)));
 
     const imageUrls = uploadResults.map((result) => result.secure_url);
 
