@@ -15,7 +15,15 @@ export async function addAddress(req, res) {
 
     const user = req.user;
 
-    if (!fullName || !streetAddress || !city || !state || !zipCode) {
+    if (
+      !label ||
+      !fullName ||
+      !streetAddress ||
+      !city ||
+      !state ||
+      !zipCode ||
+      !phoneNumber
+    ) {
       return res.status(400).json({ error: "Missing required address fields" });
     }
 
@@ -88,13 +96,15 @@ export async function updateAddress(req, res) {
       });
     }
 
-    address.label = label || address.label;
-    address.fullName = fullName || address.fullName;
-    address.streetAddress = streetAddress || address.streetAddress;
-    address.city = city || address.city;
-    address.state = state || address.state;
-    address.zipCode = zipCode || address.zipCode;
-    address.phoneNumber = phoneNumber || address.phoneNumber;
+    address.label = label !== undefined ? label : address.label;
+    address.fullName = fullName !== undefined ? fullName : address.fullName;
+    address.streetAddress =
+      streetAddress !== undefined ? streetAddress : address.streetAddress;
+    address.city = city !== undefined ? city : address.city;
+    address.state = state !== undefined ? state : address.state;
+    address.zipCode = zipCode !== undefined ? zipCode : address.zipCode;
+    address.phoneNumber =
+      phoneNumber !== undefined ? phoneNumber : address.phoneNumber;
     address.isDefault = isDefault !== undefined ? isDefault : address.isDefault;
 
     await user.save();
@@ -130,6 +140,11 @@ export async function deleteAddress(req, res) {
 export async function addToWishlist(req, res) {
   try {
     const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: "Product ID is required" });
+    }
+
     const user = req.user;
 
     // check if product is already in the wishlist
