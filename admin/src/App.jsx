@@ -17,14 +17,18 @@ function App() {
     <Routes>
       <Route
         path="/login"
-        element={isSignedIn ? <Navigate to={"/dashboard"} /> : <LoginPage />}
+        element={
+          isSignedIn ? <Navigate to={"/dashboard"} replace /> : <LoginPage />
+        }
       />
 
       <Route
         path="/"
-        element={isSignedIn ? <DashboardLayout /> : <Navigate to={"/login"} />}
+        element={
+          isSignedIn ? <DashboardLayout /> : <Navigate to={"/login"} replace />
+        }
       >
-        <Route index element={<Navigate to={"dashboard"} />} />
+        <Route index element={<Navigate to={"dashboard"} replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="products" element={<ProductsPage />} />
         <Route path="orders" element={<OrdersPage />} />
