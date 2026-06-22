@@ -9,12 +9,20 @@ import {
 import { capitalizeText, formatDate, getOrderStatusBadge } from "../lib/utils";
 
 function DashboardPage() {
-  const { data: ordersData, isLoading: ordersLoading } = useQuery({
+  const {
+    data: ordersData,
+    isLoading: ordersLoading,
+    isError: ordersError,
+  } = useQuery({
     queryKey: ["orders"],
     queryFn: orderApi.getAll,
   });
 
-  const { data: statsData, isLoading: statsLoading } = useQuery({
+  const {
+    data: statsData,
+    isLoading: statsLoading,
+    isError: statsError,
+  } = useQuery({
     queryKey: ["stats"],
     queryFn: statsApi.getDashboard,
   });
@@ -46,18 +54,24 @@ function DashboardPage() {
       icon: <PackageIcon className="size-8" />,
     },
   ];
+
   return (
     <div className="space-y-6">
       {/* STATS */}
-      <div className="stats stat  s-vertical lg:stats-horizontal shadow w-full bg-base-100">
-        {statsCards.map((stat) => (
-          <div key={stat.name} className="stat">
-            <div className="stat-figure text-primary">{stat.icon}</div>
-            <div className="stat-title">{stat.name}</div>
-            <div className="stat-value">{stat.value}</div>
-          </div>
-        ))}
-      </div>
+
+      {statsError ? (
+        <div className="alert alert-error">Failed to load dashboard stats.</div>
+      ) : (
+        <div className="stats stats-vertical lg:stats-horizontal shadow w-full bg-base-100">
+          {statsCards.map((stat) => (
+            <div key={stat.name} className="stat">
+              <div className="stat-figure text-primary">{stat.icon}</div>
+              <div className="stat-title">{stat.name}</div>
+              <div className="stat-value">{stat.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* RECENT ORDERS */}
       <div className="card bg-base-100 shadow-xl">
@@ -67,6 +81,10 @@ function DashboardPage() {
           {ordersLoading ? (
             <div className="flex justify-center py-8">
               <span className="loading loading-spinner loading-lg" />
+            </div>
+          ) : ordersError ? (
+            <div className="alert alert-error">
+              Failed to load recent orders.
             </div>
           ) : recentOrders.length === 0 ? (
             <div className="text-center py-8 text-base-content/60">
