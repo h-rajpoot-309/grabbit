@@ -60,6 +60,9 @@ function ProductsPage() {
 
   // once the product is created, updated or deleted syuccessfully we are resetting the local states
   const closeModal = () => {
+    imagePreviews.forEach((url) => {
+      if (url.startsWith("blob:")) URL.revokeObjectURL(url);
+    });
     // reset the state
     setShowModal(false);
     setEditingProduct(null);
@@ -104,7 +107,18 @@ function ProductsPage() {
   // function to run when the button is pressed
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    const price = Number(formData.price);
+    const stock = Number(formData.stock);
+    if (
+      !Number.isFinite(price) ||
+      price < 0 ||
+      !Number.isInteger(stock) ||
+      stock < 0
+    ) {
+      return alert(
+        "Price must be non-negative and stock must be a non-negative whole number",
+      );
+    }
     // for new products, require images
     if (!editingProduct && imagePreviews.length === 0) {
       return alert("Please upload at least one image");
@@ -294,6 +308,7 @@ function ProductsPage() {
                 <input
                   type="number"
                   step="0.01"
+                  min="0"
                   placeholder="0.00"
                   className="input input-bordered"
                   value={formData.price}
@@ -311,6 +326,8 @@ function ProductsPage() {
                 <input
                   type="number"
                   placeholder="0"
+                  min="0"
+                  step="1"
                   className="input input-bordered"
                   value={formData.stock}
                   onChange={(e) =>
