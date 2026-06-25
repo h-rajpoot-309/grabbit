@@ -58,7 +58,6 @@ function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* STATS */}
-
       {statsError ? (
         <div className="alert alert-error">Failed to load dashboard stats.</div>
       ) : (
