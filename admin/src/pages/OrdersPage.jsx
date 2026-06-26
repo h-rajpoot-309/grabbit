@@ -6,7 +6,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 function OrdersPage() {
   const queryClient = useQueryClient();
 
-  const { data: ordersData, isLoading } = useQuery({
+  const {
+    data: ordersData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["orders"],
     queryFn: orderApi.getAll,
   });
@@ -15,7 +19,7 @@ function OrdersPage() {
     mutationFn: orderApi.updateStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
     },
   });
 
@@ -40,6 +44,8 @@ function OrdersPage() {
             <div className="flex justify-center py-12">
               <span className="loading loading-spinner loading-lg" />
             </div>
+          ) : isError ? (
+            <div className="alert alert-error">Failed to load Orders.</div>
           ) : orders.length === 0 ? (
             <div className="text-center py-12 text-base-content/60">
               <p className="text-xl font-semibold mb-2">No orders yet</p>
